@@ -6,24 +6,206 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Movies!</title>
     <style>
-        /* Part 3: Your styling goes here */
-    </style>
-    <script>
-        function reverseString(s) {
-            return s.split("").reverse().join("");
+         body {
+            font-family: 'Trebuchet MS', sans-serif;
+            background-color: #f4f6f8;
+            margin: 20px;
         }
 
-        window.onload = function () {
+        article {
+            background-color: white;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        h3 {
+            margin-top: 14px;
+            margin-bottom: 8px;
+        }
+
+        img {
+            max-width: 150px;
+            border-radius: 10px;
+            margin-bottom: 12px;
+            display: block;
+        }
+
+        dl {
+            margin-bottom: 12px;
+        }
+
+        dt {
+            font-weight: bold;
+            margin-top: 6px;
+        }
+
+        dd {
+            margin: 0 0 8px 0;
+        }
+
+        p {
+            margin-bottom: 12px;
+            line-height: 1.5;
+        }
+
+        ul {
+            padding-left: 20px;
+            margin-top: 0;
+        }
+
+        li {
+            margin-bottom: 4px;
+        }
+
+        article:hover {
+            transform: scale(1.01);
+            transition: 0.2s;
+        }
+
+        .genre {
+            background-color: #007BFF;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 8px;
+            margin-right: 6px;
+            display: inline-block;
+            font-size: 12px;
+        }
+    </style>
+    <script>
+           window.onload = function () {
             const xhr = new XMLHttpRequest()
+
             xhr.onload = function () {
                 const bodyElement = document.querySelector("body")
+                // holt sich hier das Body Element aus unserer HTML DAtei, damit wir 
+                //später anpassungen durchführen können. 
                 if (xhr.status == 200) {
-		            /* Part 2: Build the HTML elements here and append them to the body */ 
-                    bodyElement.append(reverseString(xhr.responseText))
+                    const movies = JSON.parse(xhr.responseText)
+                    //Geparstes Array übersetzt
+                    movies.forEach(function (movie) {
+                              // durch jedees Element und die einzelnen Elemente extrahieren. 
+                        const article = document.createElement("article")
+
+                        // für jedes Value erstellen wir in dem Fall ein HTML - Element. 
+                        const title = document.createElement("h2")
+                        title.textContent = movie.title
+
+                        const poster = document.createElement("img")
+                        poster.src = movie.poster
+                        poster.alt = "Poster von " + movie.title
+                        //Verbesser Barrierefreiheit, test: media bei den allgemeinen checks
+                        poster.style.width = "150px"
+                        //ist die Anpassung der breite vom Bild
+
+                        const details = document.createElement("dl")
+
+                        const releasedLabel = document.createElement("dt")
+                        releasedLabel.textContent = "Released"
+                        const releasedValue = document.createElement("dd")
+                        const releasedTime = document.createElement("time")
+                        releasedTime.dateTime = movie.released
+                        releasedTime.textContent = movie.released
+                        releasedValue.appendChild(releasedTime)
+
+                        const runtimeLabel = document.createElement("dt")
+                        runtimeLabel.textContent = "Runtime"
+                        const runtimeValue = document.createElement("dd")
+                        runtimeValue.textContent = movie.runtime + " min"
+
+                        const metascoreLabel = document.createElement("dt")
+                        metascoreLabel.textContent = "Metascore"
+                        const metascoreValue = document.createElement("dd")
+                        metascoreValue.textContent = movie.metascore
+
+                        const ratingLabel = document.createElement("dt")
+                        ratingLabel.textContent = "IMDb Rating"
+                        const ratingValue = document.createElement("dd")
+                        ratingValue.textContent = movie.imdbRating
+
+                        details.appendChild(releasedLabel)
+                        details.appendChild(releasedValue)
+                        details.appendChild(runtimeLabel)
+                        details.appendChild(runtimeValue)
+                        details.appendChild(metascoreLabel)
+                        details.appendChild(metascoreValue)
+                        details.appendChild(ratingLabel)
+                        details.appendChild(ratingValue)
+
+                        const plot = document.createElement("p")
+                        plot.textContent = "Plot: " + movie.plot
+
+                        const genresTitle = document.createElement("h3")
+                        genresTitle.textContent = "Genres"
+
+                        const genresContainer = document.createElement("div")
+
+                        movie.genres.forEach(function (genre) {
+                            const span = document.createElement("span")
+                            //für das genre-Element verwendet laut aufgabe. Ist im Endeffekt ein Inline Element, 
+                            // das beudetet es steht im Textfluss und macht keinen Zeilenumbruch. 
+                            span.textContent = genre
+                            span.className = "genre" // füge eine classid hinzu wie bei punkt5 
+                            genresContainer.appendChild(span)
+                        })
+
+                        const directorsTitle = document.createElement("h3")
+                        directorsTitle.textContent = "Directors"
+                        const directorsList = document.createElement("ul")
+                        // hier listest du alle genres auf die es so gibt. 
+                        movie.directors.forEach(function (director) {
+                            const li = document.createElement("li")
+                            li.textContent = director
+                            directorsList.appendChild(li)
+                        })
+
+                        const writersTitle = document.createElement("h3")
+                        writersTitle.textContent = "Writers"
+                        const writersList = document.createElement("ul")
+                        movie.writers.forEach(function (writer) {
+                            const li = document.createElement("li")
+                            li.textContent = writer
+                            writersList.appendChild(li)
+                        })
+
+                        const actorsTitle = document.createElement("h3")
+                        actorsTitle.textContent = "Actors"
+                        const actorsList = document.createElement("ul")
+                        movie.actors.forEach(function (actor) {
+                            const li = document.createElement("li")
+                            li.textContent = actor
+                            actorsList.appendChild(li)
+                        })
+
+                        //aritcle ist in dem fall für jedes einzelne Element vom Array ein Child 
+                        article.appendChild(title)
+                        article.appendChild(poster)
+                        article.appendChild(details)
+                        article.appendChild(plot)
+                        article.appendChild(genresTitle)
+                        article.appendChild(genresContainer)
+                        article.appendChild(directorsTitle)
+                        article.appendChild(directorsList)
+                        article.appendChild(writersTitle)
+                        article.appendChild(writersList)
+                        article.appendChild(actorsTitle)
+                        article.appendChild(actorsList)
+
+                        //wir fügen das ganze zum BodyElement er ist jetzt das Elternteil von Aritcle
+                        bodyElement.appendChild(article)
+                    })
                 } else {
                     bodyElement.append("Daten konnten nicht geladen werden, Status " + xhr.status + " - " + xhr.statusText)
                 }
             }
+
             xhr.open("GET", "/movies")
             xhr.send()
         }
